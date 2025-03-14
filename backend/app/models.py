@@ -1,5 +1,5 @@
 import uuid
-
+import datetime
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -112,3 +112,24 @@ class TokenPayload(SQLModel):
 class NewPassword(SQLModel):
     token: str
     new_password: str = Field(min_length=8, max_length=40)
+
+#FACT Engine 
+#fact should probably be Many-to-One because many facts can be added to the funfact list.
+class Results(SQLModel):
+    id: uuid.UUID
+    title: str | None = Field(min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=1000)
+    created_date: datetime = Field(default_factory=datetime.datetime.now(datetime.timezone.utc), nullable=False)
+
+
+
+# Add fact results to fun fact list
+class FunFactList(SQLModel):
+    id: uuid.UUID
+    title: str | None = Field(min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=1000)
+    created_date: datetime = Field(default_factory=datetime.datetime.now(datetime.timezone.utc), nullable=False)
+    date_added: datetime = Field(default_factory=datetime.datetime.now(datetime.timezone.utc), nullable=False)
+    ...
+
+#We to that the user relationship with a funfact list is One-to-Many meaning one user can add many fun facts to his funfact list
